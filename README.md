@@ -96,13 +96,18 @@ Run the optional FastAPI service:
 
 ```bash
 pip install -e ".[server]"
-uvicorn injectguard.server:app
+uvicorn injectguard.server:app --reload
 ```
 
-The service exposes a single endpoint:
+Open `http://127.0.0.1:8000` for the local web scanner. It supports pasted
+content, file uploads and drag-and-drop, automatic container detection, and a
+per-signal evidence breakdown. Scans stay on the local machine.
+
+The service also exposes the scan API and interactive API documentation:
 
 ```text
 POST /scan
+GET  /docs
 ```
 
 ## API

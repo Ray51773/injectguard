@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Local prompt-injection scanner for machine-shaped content.">
+    <title>injectguard scanner</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><span>IG</span></span>
+        <div>
+          <h1>injectguard</h1>
+          <p>Container-aware scanner</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="detector-count">7 detectors</span>
+        <div class="privacy-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="connection-label">Local-only analysis</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="input-pane" aria-labelledby="input-title">
+        <div class="section-heading">
+          <div class="heading-lockup">
+            <span class="section-index" aria-hidden="true">01</span>
+            <div>
+            <p class="eyebrow">Input</p>
+            <h2 id="input-title">Content to inspect</h2>
+            </div>
+          </div>
+          <div class="input-actions">
+            <button id="sample-button" class="button button-secondary" type="button">Load sample</button>
+            <button id="clear-button" class="button button-quiet" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field filename-field">
+            <span>Source name</span>
+            <input id="source-input" type="text" value="response.json" placeholder="response.json" autocomplete="off">
+          </label>
+          <label class="field container-field">
+            <span>Container</span>
+            <select id="container-select">
+              <option value="">Detect automatically</option>
+              <option value="ENV_FILE">Environment file</option>
+              <option value="CREDENTIALS">Credentials</option>
+              <option value="JSON">JSON</option>
+              <option value="YAML">YAML</option>
+              <option value="SOURCE_COMMENT">Source comment</option>
+              <option value="LOG">Log</option>
+              <option value="HTML">HTML</option>
+              <option value="MARKDOWN">Markdown</option>
+              <option value="PDF_TEXT">PDF text</option>
+              <option value="TOOL_RESPONSE">Tool response</option>
+              <option value="UNKNOWN">Unknown</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="drop-zone" class="editor-shell">
+          <div class="editor-topline">
+            <span>Payload</span>
+            <span class="editor-language">plain text</span>
+          </div>
+          <textarea id="content-input" spellcheck="false" aria-label="Content to scan" placeholder="Untrusted content"></textarea>
+          <div class="editor-footer">
+            <label class="file-button button button-secondary" for="file-input">Open file</label>
+            <input id="file-input" type="file" hidden>
+            <span id="content-stats">0 lines · 0 characters</span>
+          </div>
+        </div>
+
+        <button id="scan-button" class="button button-primary" type="button">
+          <span>Run local scan</span>
+          <span class="button-key">⌘ Enter</span>
+        </button>
+      </section>
+
+      <section class="result-pane" aria-labelledby="result-title" aria-live="polite">
+        <div id="empty-state" class="empty-state">
+          <div class="empty-visual" aria-hidden="true">
+            <span class="scan-line line-one"></span>
+            <span class="scan-line line-two"></span>
+            <span class="scan-line line-three"></span>
+            <span class="scan-cursor"></span>
+          </div>
+          <p class="eyebrow">Analysis</p>
+          <h2 id="result-title">Ready to scan</h2>
+          <p>No scan has been run in this session.</p>
+        </div>
+
+        <div id="loading-state" class="loading-state" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Running local detectors…</p>
+        </div>
+
+        <div id="error-state" class="error-state" hidden>
+          <p class="eyebrow">Scan failed</p>
+          <h2>Could not inspect this content</h2>
+          <p id="error-message"></p>
+          <button id="retry-button" class="button button-secondary" type="button">Try again</button>
+        </div>
+
+        <div id="result-state" class="result-state" hidden>
+          <div class="result-summary">
+            <div class="verdict-copy">
+              <p class="eyebrow">Verdict</p>
+              <div class="verdict-line">
+                <span id="verdict-badge" class="verdict-badge">Clean</span>
+                <span id="container-badge" class="container-badge">JSON</span>
+              </div>
+              <p id="result-source" class="result-source"></p>
+            </div>
+            <div class="risk-display">
+              <div id="risk-ring" class="risk-ring" style="--risk: 0">
+                <div>
+                  <strong id="risk-score">0%</strong>
+                  <span>risk</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="assessment">
+            <div class="assessment-heading">
+              <h3>Assessment</h3>
+              <span id="signal-count">0 signals</span>
+            </div>
+            <p id="assessment-copy"></p>
+          </div>
+
+          <div class="signal-section">
+            <div class="signal-heading">
+              <div>
+                <p class="eyebrow">Evidence</p>
+                <h3>Detector signals</h3>
+              </div>
+              <span class="contribution-label">score × weight</span>
+            </div>
+            <div id="signal-list" class="signal-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span><strong>Defensive signal only.</strong> Detection is probabilistic.</span>
+      <div class="footer-links">
+        <span>v0.1</span>
+        <a href="docs">API docs</a>
+      </div>
+    </footer>
+  </body>
+</html>
