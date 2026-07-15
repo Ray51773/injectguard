@@ -1,0 +1,125 @@
+thresholds:
+  UNKNOWN:
+    suspicious: 0.35
+    injection: 0.65
+  ENV_FILE:
+    suspicious: 0.22
+    injection: 0.48
+  CREDENTIALS:
+    suspicious: 0.20
+    injection: 0.45
+  JSON:
+    suspicious: 0.28
+    injection: 0.55
+  YAML:
+    suspicious: 0.28
+    injection: 0.55
+  LOG:
+    suspicious: 0.32
+    injection: 0.60
+  MARKDOWN:
+    suspicious: 0.45
+    injection: 0.75
+  HTML:
+    suspicious: 0.42
+    injection: 0.72
+  SOURCE_COMMENT:
+    suspicious: 0.38
+    injection: 0.68
+  PDF_TEXT:
+    suspicious: 0.34
+    injection: 0.62
+  TOOL_RESPONSE:
+    suspicious: 0.30
+    injection: 0.58
+
+weights:
+  UNKNOWN:
+    direct_address: 0.8
+    instruction_shape: 1.0
+    semantic_mismatch: 0.7
+    affective_load: 0.6
+    authority_appeal: 0.6
+    encoding_evasion: 1.2
+    role_break: 1.4
+  ENV_FILE:
+    direct_address: 1.7
+    instruction_shape: 1.5
+    semantic_mismatch: 1.0
+    affective_load: 0.8
+    authority_appeal: 0.9
+    encoding_evasion: 1.3
+    role_break: 1.7
+  CREDENTIALS:
+    direct_address: 1.8
+    instruction_shape: 1.6
+    semantic_mismatch: 1.0
+    affective_load: 0.9
+    authority_appeal: 1.0
+    encoding_evasion: 1.4
+    role_break: 1.8
+  JSON:
+    direct_address: 1.4
+    instruction_shape: 1.3
+    semantic_mismatch: 1.1
+    affective_load: 0.7
+    authority_appeal: 0.8
+    encoding_evasion: 1.2
+    role_break: 1.5
+  YAML:
+    direct_address: 1.4
+    instruction_shape: 1.3
+    semantic_mismatch: 1.1
+    affective_load: 0.7
+    authority_appeal: 0.8
+    encoding_evasion: 1.2
+    role_break: 1.5
+  LOG:
+    direct_address: 1.0
+    instruction_shape: 1.0
+    semantic_mismatch: 0.8
+    affective_load: 0.7
+    authority_appeal: 0.7
+    encoding_evasion: 1.1
+    role_break: 1.2
+  HTML:
+    direct_address: 0.35
+    instruction_shape: 0.5
+    semantic_mismatch: 0.45
+    affective_load: 0.35
+    authority_appeal: 0.4
+    encoding_evasion: 1.1
+    role_break: 1.1
+  MARKDOWN:
+    direct_address: 0.2
+    instruction_shape: 0.35
+    semantic_mismatch: 0.25
+    affective_load: 0.3
+    authority_appeal: 0.35
+    encoding_evasion: 1.0
+    role_break: 0.9
+  SOURCE_COMMENT:
+    direct_address: 0.75
+    instruction_shape: 0.85
+    semantic_mismatch: 0.7
+    affective_load: 0.45
+    authority_appeal: 0.55
+    encoding_evasion: 1.1
+    role_break: 1.1
+  PDF_TEXT:
+    direct_address: 0.9
+    instruction_shape: 1.0
+    semantic_mismatch: 0.9
+    affective_load: 0.65
+    authority_appeal: 0.65
+    encoding_evasion: 1.1
+    role_break: 1.3
+  TOOL_RESPONSE:
+    direct_address: 1.3
+    instruction_shape: 1.2
+    semantic_mismatch: 1.0
+    affective_load: 0.7
+    authority_appeal: 0.8
+    encoding_evasion: 1.2
+    role_break: 1.5
+

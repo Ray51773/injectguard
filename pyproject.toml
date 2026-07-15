@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "injectguard"
+version = "0.1.0"
+description = "Offline prompt-injection detection for machine-shaped containers."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "InjectGuard contributors" }]
+keywords = ["llm", "prompt-injection", "security", "retrieval", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Security",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+nlp = [
+  "spacy>=3.7",
+  "sentence-transformers>=2.6",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+injectguard = "injectguard.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/injectguard"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/README.md",
+  "/LICENSE",
+  "/pyproject.toml",
+  "/scripts",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
