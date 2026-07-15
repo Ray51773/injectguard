@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from injectguard.signals.common import SignalMatch, clamp, density, first_spans, matches, normalize_obfuscation
+from injectguard.signals.common import (
+    SignalMatch,
+    clamp,
+    density,
+    first_spans,
+    matches,
+    normalize_obfuscation,
+)
 from injectguard.types import ContainerType
 
 

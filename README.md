@@ -9,6 +9,16 @@ proxying, or remote model calls on the default path. The key idea is container
 mismatch: an inert infrastructure artifact should not sound like it is talking
 to an agent.
 
+## Thesis
+
+LLM agents often place untrusted content in the same context window as trusted
+instructions. The model does not receive a hard security boundary between "data"
+and "instructions"; it receives text. `injectguard` looks for a narrower,
+defender-friendly symptom: the payload does not fit the container. A credentials
+file has no business addressing a reader in second person. A JSON API response
+has no business asking an agent to comply with a policy. Real infrastructure is
+usually boring.
+
 ```python
 from injectguard import ContainerType, scan
 
@@ -18,9 +28,9 @@ result = scan(
     source=".env",
 )
 
-print(result.risk)
-print(result.verdict)
-print(result.explain())
+risk = result.risk
+verdict = result.verdict
+reason = result.explain()
 ```
 
 ## Install
@@ -45,8 +55,9 @@ detectors use them. Otherwise they fall back to offline deterministic scoring.
 ## CLI
 
 ```bash
-injectguard scan path/to/file.env
+injectguard scan path/to/file.env          # exit 0 clean, 1 suspicious, 2 injection
 injectguard scan --recursive ./retrieved --format json
+injectguard scan ./retrieved --recursive --format sarif > injectguard.sarif
 cat response.json | injectguard scan -
 injectguard explain path/to/file.env
 ```
@@ -119,6 +130,27 @@ INJECTGUARD_CONFIG=/path/to/injectguard.yml injectguard scan ./retrieved
 User config is merged over the defaults, so you can override a single container
 or detector weight.
 
+Disable an individual detector:
+
+```yaml
+detectors:
+  direct_address: false
+```
+
+## Limitations
+
+Detection is probabilistic and cannot be complete. LLMs draw no inherent line
+between data and instructions, so this library reduces likelihood and impact; it
+does not prevent prompt injection. That matches the UK NCSC position reported in
+December 2025: prompt injection should be treated as a risk to reduce and bound,
+not a bug class with a single complete mitigation
+([ITPro summary of NCSC guidance, 9 December 2025][ncsc-dec-2025]).
+
+Context-bomb detection is dual-use. Canary resources can be defensive, and tools
+that identify them can also help attackers understand defensive tripwires.
+`injectguard` is aimed at defenders running agents over untrusted files, tool
+responses, scraped pages, and retrieved documents.
+
 ## Generate transformer centroids
 
 The repository ships a compact centroid data file so scans are offline. To
@@ -130,3 +162,4 @@ python scripts/build_centroids.py
 
 That script does not need network access if the model is already cached.
 
+[ncsc-dec-2025]: https://www.itpro.com/security/ncsc-issues-urgent-warning-over-growing-ai-prompt-injection-risks-heres-what-you-need-to-know

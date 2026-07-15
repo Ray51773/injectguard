@@ -17,7 +17,10 @@ TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{2,}")
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
     centroids = _load_centroids()
-    expected = centroids.get("centroids", {}).get(container.value) or centroids.get("centroids", {}).get("UNKNOWN")
+    expected = centroids.get("centroids", {}).get(container.value) or centroids.get(
+        "centroids",
+        {},
+    ).get("UNKNOWN")
     if not expected:
         return SignalMatch("semantic_mismatch", 0.0, [], "no centroid")
 
@@ -90,4 +93,3 @@ def _hash_embedding(text: str, dimension: int) -> List[float]:
     if not norm:
         return vector
     return [value / norm for value in vector]
-

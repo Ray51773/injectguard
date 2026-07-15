@@ -67,7 +67,9 @@ def natural_language_score(text: str) -> float:
     }
     stop_hits = sum(1 for word in words if word.lower() in stop)
     alpha_ratio = sum(ch.isalpha() or ch.isspace() for ch in text) / max(1, len(text))
-    return clamp((len(words) / 20.0) * 0.45 + (stop_hits / max(1, len(words))) * 0.35 + alpha_ratio * 0.2)
+    word_component = (len(words) / 20.0) * 0.45
+    stop_component = (stop_hits / max(1, len(words))) * 0.35
+    return clamp(word_component + stop_component + alpha_ratio * 0.2)
 
 
 def normalize_obfuscation(text: str) -> str:
@@ -139,4 +141,3 @@ def first_spans(spans: Iterable[Span], limit: int = 5) -> List[Span]:
         if len(unique) >= limit:
             break
     return unique
-

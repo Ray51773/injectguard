@@ -13,11 +13,18 @@ EMOTIONAL_RE = (
     r"\b(urgent|critical|emergency|afraid|fear|panic|distress|trauma|"
     r"vulnerable|desperate|please|beg|important|life[- ]?threatening)\b"
 )
-SENTIMENT_RE = r"\b(terrible|wonderful|awful|horrific|beautiful|evil|good|bad|wrong|right)\b"
+SENTIMENT_RE = (
+    r"\b(terrible|wonderful|awful|horrific|beautiful|evil|good|bad|"
+    r"wrong|right)\b"
+)
 
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
-    spans = matches(MORAL_RE, content) + matches(EMOTIONAL_RE, content) + matches(SENTIMENT_RE, content)
+    spans = (
+        matches(MORAL_RE, content)
+        + matches(EMOTIONAL_RE, content)
+        + matches(SENTIMENT_RE, content)
+    )
     raw = len(spans)
     base = density(raw, content, scale=16.0)
 
@@ -32,4 +39,3 @@ def score(content: str, container: ContainerType, source: str | None = None) -> 
         spans=first_spans(spans),
         details=f"{raw} affective or moral markers",
     )
-

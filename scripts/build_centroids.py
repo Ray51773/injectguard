@@ -73,10 +73,11 @@ def main() -> int:
     }
     path = Path(__file__).resolve().parents[1] / "src" / "injectguard" / "data" / "centroids.json"
     path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(path)
+    import sys
+
+    sys.stdout.write(f"{path}\n")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib
 from typing import Iterable, List, Optional
 
-from injectguard.config import load_config, thresholds_for, weights_for
+from injectguard.config import enabled_detectors, load_config, thresholds_for, weights_for
 from injectguard.signals.common import SignalMatch
 from injectguard.types import ContainerType, ScanResult, Signal, Verdict
 
@@ -26,7 +26,7 @@ def scan(
 ) -> ScanResult:
     config = load_config()
     weights = weights_for(config, container)
-    matches = list(_run_detectors(content, container, source))
+    matches = list(_run_detectors(content, container, source, enabled_detectors(config)))
 
     weighted_total = 0.0
     active_weight = 0.0
@@ -81,8 +81,11 @@ def _run_detectors(
     content: str,
     container: ContainerType,
     source: Optional[str],
+    enabled: set[str],
 ) -> Iterable[SignalMatch]:
     for detector in DETECTORS:
+        if detector not in enabled:
+            continue
         module = importlib.import_module(f"injectguard.signals.{detector}")
         yield module.score(content, container, source=source)
 
@@ -95,4 +98,3 @@ def _excerpt(content: str, span: tuple[int, int]) -> str:
     if len(excerpt) > 180:
         return excerpt[:177] + "..."
     return excerpt
-

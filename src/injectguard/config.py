@@ -46,6 +46,17 @@ def thresholds_for(config: Mapping[str, Any], container: ContainerType) -> Dict[
     }
 
 
+def enabled_detectors(config: Mapping[str, Any]) -> set[str]:
+    configured = config.get("detectors", {})
+    if not isinstance(configured, Mapping):
+        return set()
+    return {
+        str(name)
+        for name, enabled in configured.items()
+        if bool(enabled)
+    }
+
+
 def _deep_merge(
     base: MutableMapping[str, Any],
     override: Mapping[str, Any],
@@ -88,8 +99,12 @@ def _simple_yaml(text: str) -> Dict[str, Any]:
             parent[key] = child
             stack.append((indent, child))
         else:
-            try:
-                parent[key] = float(value)
-            except ValueError:
-                parent[key] = value.strip('"').strip("'")
+            lower_value = value.lower()
+            if lower_value in {"true", "false"}:
+                parent[key] = lower_value == "true"
+            else:
+                try:
+                    parent[key] = float(value)
+                except ValueError:
+                    parent[key] = value.strip('"').strip("'")
     return root

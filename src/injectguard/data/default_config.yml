@@ -1,3 +1,12 @@
+detectors:
+  direct_address: true
+  instruction_shape: true
+  semantic_mismatch: true
+  affective_load: true
+  authority_appeal: true
+  encoding_evasion: true
+  role_break: true
+
 thresholds:
   UNKNOWN:
     suspicious: 0.35
@@ -122,4 +131,3 @@ weights:
     authority_appeal: 0.8
     encoding_evasion: 1.2
     role_break: 1.5
-

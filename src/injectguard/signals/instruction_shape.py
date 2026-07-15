@@ -2,7 +2,14 @@ from __future__ import annotations
 
 import re
 
-from injectguard.signals.common import SignalMatch, clamp, density, first_spans, get_spacy_nlp, matches
+from injectguard.signals.common import (
+    SignalMatch,
+    clamp,
+    density,
+    first_spans,
+    get_spacy_nlp,
+    matches,
+)
 from injectguard.types import ContainerType
 
 
@@ -11,12 +18,22 @@ COMPLIANCE_RE = (
     r"before proceeding|from now on|you must|you should|must not|do not|"
     r"under no circumstances|regardless of|comply with|follow these instructions)\b"
 )
-PROHIBITION_RE = r"\b(never|do not|don't|must not|cannot|forbidden|prohibited|under no circumstances)\b"
-LEXICAL_IMPERATIVE_RE = r"(?m)^\s*(ignore|disregard|forget|reveal|print|return|send|exfiltrate|summarize|classify|answer|translate|execute|decode)\b"
+PROHIBITION_RE = (
+    r"\b(never|do not|don't|must not|cannot|forbidden|prohibited|"
+    r"under no circumstances)\b"
+)
+LEXICAL_IMPERATIVE_RE = (
+    r"(?m)^\s*(ignore|disregard|forget|reveal|print|return|send|"
+    r"exfiltrate|summarize|classify|answer|translate|execute|decode)\b"
+)
 
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
-    spans = matches(COMPLIANCE_RE, content) + matches(PROHIBITION_RE, content) + matches(LEXICAL_IMPERATIVE_RE, content)
+    spans = (
+        matches(COMPLIANCE_RE, content)
+        + matches(PROHIBITION_RE, content)
+        + matches(LEXICAL_IMPERATIVE_RE, content)
+    )
     compliance_count = len(spans)
     imperative_count = _imperative_count(content)
     raw = compliance_count * 2 + imperative_count
@@ -50,9 +67,12 @@ def _imperative_count(content: str) -> int:
         if first.tag_ == "VB" or first.pos_ == "VERB" and first.dep_ in {"ROOT", ""}:
             count += 1
             continue
-        if len(tokens) > 1 and tokens[0].lower_ in {"please", "kindly"} and tokens[1].pos_ == "VERB":
+        if (
+            len(tokens) > 1
+            and tokens[0].lower_ in {"please", "kindly"}
+            and tokens[1].pos_ == "VERB"
+        ):
             count += 1
     if count:
         return count
     return len(matches(LEXICAL_IMPERATIVE_RE, content))
-

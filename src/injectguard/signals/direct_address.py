@@ -8,7 +8,10 @@ from injectguard.types import ContainerType
 
 SECOND_PERSON_RE = r"\b(you|your|yours|yourself|yourselves|reader|assistant|agent|model)\b"
 VOCATIVE_RE = r"\b(dear|hello|attention|note to|listen|hey)\s+(assistant|agent|model|reader|ai)\b"
-IMPERATIVE_RE = r"(?m)^\s*(ignore|follow|read|write|print|reveal|return|summarize|comply|do not|don't|never|always)\b"
+IMPERATIVE_RE = (
+    r"(?m)^\s*(ignore|follow|read|write|print|reveal|return|summarize|"
+    r"comply|do not|don't|never|always)\b"
+)
 
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
@@ -30,4 +33,3 @@ def score(content: str, container: ContainerType, source: str | None = None) -> 
         spans=spans,
         details=f"{raw_count} direct-address markers",
     )
-

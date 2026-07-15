@@ -4,14 +4,23 @@ import base64
 import binascii
 import re
 
-from injectguard.signals.common import SignalMatch, clamp, first_spans, natural_language_score, normalize_obfuscation
+from injectguard.signals.common import (
+    SignalMatch,
+    clamp,
+    first_spans,
+    natural_language_score,
+    normalize_obfuscation,
+)
 from injectguard.types import ContainerType
 
 
 BASE64_RE = re.compile(r"\b(?:[A-Za-z0-9+/]{24,}={0,2}|[A-Za-z0-9_-]{24,})\b")
 HEX_RE = re.compile(r"\b(?:0x)?[0-9A-Fa-f]{32,}\b")
 ZERO_WIDTH_RE = re.compile(r"[\u200b-\u200f\u202a-\u202e\u2060-\u206f]")
-INJECTION_RE = re.compile(r"\b(ignore|previous instructions|system prompt|you are an ai|reveal|exfiltrate)\b", re.I)
+INJECTION_RE = re.compile(
+    r"\b(ignore|previous instructions|system prompt|you are an ai|reveal|exfiltrate)\b",
+    re.I,
+)
 
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
@@ -70,4 +79,3 @@ def _decode_hex(value: str) -> str | None:
 
 def _decoded_is_suspicious(decoded: str) -> bool:
     return natural_language_score(decoded) > 0.35 and bool(INJECTION_RE.search(decoded))
-
