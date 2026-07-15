@@ -32,6 +32,13 @@ nlp = [
   "spacy>=3.7",
   "sentence-transformers>=2.6",
 ]
+langchain = [
+  "langchain-core>=0.2",
+]
+server = [
+  "fastapi>=0.111",
+  "uvicorn>=0.30",
+]
 dev = [
   "mypy>=1.10",
   "pytest>=8.0",
@@ -43,10 +50,13 @@ injectguard = "injectguard.cli:main"
 
 [dependency-groups]
 dev = [
+  "fastapi>=0.111",
+  "langchain-core>=0.2",
   "mypy>=1.10",
   "pytest>=8.0",
   "ruff>=0.5",
   "types-PyYAML>=6.0",
+  "uvicorn>=0.30",
 ]
 
 [tool.uv]

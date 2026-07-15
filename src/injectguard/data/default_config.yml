@@ -12,25 +12,25 @@ thresholds:
     suspicious: 0.35
     injection: 0.65
   ENV_FILE:
-    suspicious: 0.22
+    suspicious: 0.17
     injection: 0.48
   CREDENTIALS:
-    suspicious: 0.20
+    suspicious: 0.17
     injection: 0.45
   JSON:
-    suspicious: 0.28
+    suspicious: 0.18
     injection: 0.55
   YAML:
-    suspicious: 0.28
+    suspicious: 0.18
     injection: 0.55
   LOG:
-    suspicious: 0.32
+    suspicious: 0.25
     injection: 0.60
   MARKDOWN:
-    suspicious: 0.45
+    suspicious: 0.09
     injection: 0.75
   HTML:
-    suspicious: 0.42
+    suspicious: 0.30
     injection: 0.72
   SOURCE_COMMENT:
     suspicious: 0.38

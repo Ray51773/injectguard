@@ -1,0 +1,1 @@
+Invoice fixture. Line item: sandbox compute units. Total: 42 credits.

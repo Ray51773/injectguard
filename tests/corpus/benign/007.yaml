@@ -1,0 +1,3 @@
+service: api
+replicas: 3
+image: registry.local/api:1.2.3

@@ -1,0 +1,1 @@
+Synthetic policy document. Section 1 defines retention labels for test records.

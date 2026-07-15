@@ -21,7 +21,10 @@ IGNORE_RE = (
     r"(all\s+)?(previous|prior|above|earlier)\s+"
     r"(instructions?|prompts?|messages?|rules?)\b"
 )
-DELIMITER_RE = r"(?m)^\s*(-{3,}|={3,}|#{3,}\s*(system|developer|instructions?)\b|\[/?(INST|SYS)\])"
+DELIMITER_RE = (
+    r"(?m)^\s*(-{3,}|={3,}|#{3,})\s*(system|developer|instructions?)\b"
+    r"|\[/?(INST|SYS)\]"
+)
 TAG_INJECTION_RE = r"<\s*(script|iframe|meta|link)\b|<!--\s*(system|prompt|instruction)"
 
 

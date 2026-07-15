@@ -31,13 +31,13 @@ def score(content: str, container: ContainerType, source: str | None = None) -> 
         decoded = _decode_base64(match.group(0))
         if decoded and _decoded_is_suspicious(decoded):
             suspicious_spans.append(match.span())
-            decoded_hits += 1
+            decoded_hits += 2
 
     for match in HEX_RE.finditer(content):
         decoded = _decode_hex(match.group(0))
         if decoded and _decoded_is_suspicious(decoded):
             suspicious_spans.append(match.span())
-            decoded_hits += 1
+            decoded_hits += 2
 
     zero_width_spans = [match.span() for match in ZERO_WIDTH_RE.finditer(content)]
     normalized = normalize_obfuscation(content)

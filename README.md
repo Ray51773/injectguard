@@ -68,6 +68,43 @@ Formats:
 - `json`: machine-readable scan results
 - `sarif`: static-analysis style output for code scanning systems
 
+## Integrations
+
+Wrap agent or MCP-style tool responses:
+
+```python
+from injectguard import wrap_tool_response
+
+@wrap_tool_response(return_scan=True)
+def lookup_record(record_id: str):
+    return {"id": record_id, "status": "synthetic"}
+
+guarded = lookup_record("fixture-1")
+guarded.scan.verdict
+```
+
+Add scan metadata to LangChain-style documents:
+
+```python
+from injectguard.langchain import InjectGuardTransformer
+
+transformer = InjectGuardTransformer()
+documents = transformer.transform_documents(documents)
+```
+
+Run the optional FastAPI service:
+
+```bash
+pip install -e ".[server]"
+uvicorn injectguard.server:app
+```
+
+The service exposes a single endpoint:
+
+```text
+POST /scan
+```
+
 ## API
 
 ```python
@@ -161,5 +198,17 @@ python scripts/build_centroids.py
 ```
 
 That script does not need network access if the model is already cached.
+
+## Efficacy Corpus
+
+The repository includes a fully synthetic test corpus under `tests/corpus/`
+with 40 benign and 40 malicious samples. Run the efficacy report with:
+
+```bash
+PYTHONPATH=src python scripts/evaluate_corpus.py tests/corpus
+```
+
+CI fails if corpus F1 drops below the threshold recorded in
+`tests/efficacy_threshold.json`.
 
 [ncsc-dec-2025]: https://www.itpro.com/security/ncsc-issues-urgent-warning-over-growing-ai-prompt-injection-risks-heres-what-you-need-to-know

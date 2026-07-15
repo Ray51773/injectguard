@@ -1,0 +1,2 @@
+WARN cache_miss key=session:synthetic elapsed_ms=3
+INFO cache_set key=session:synthetic ttl=300
