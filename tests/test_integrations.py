@@ -77,6 +77,7 @@ class ServerTests(unittest.TestCase):
         self.assertIn('apiUrl("/scan")', script)
         self.assertIn('apiUrl("/api/scan-file")', script)
         self.assertIn('hostname.endsWith("github.io")', script)
+        self.assertIn("window.location.replace(target)", script)
 
     @unittest.skipIf(server.app is None, "FastAPI server extra is not installed")
     def test_web_interface_and_scan_endpoint(self) -> None:

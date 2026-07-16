@@ -165,11 +165,12 @@ extracted segments. Expected failures use stable categories including
 
 ### Hosted interface
 
-The interface is published at <https://ray51773.github.io/injectguard/>.
-GitHub Pages is static, so real hosted scans use the FastAPI application at
-<https://injectguard-api.onrender.com>. The Pages workflow writes that address
-to the runtime `config.js`; it can be replaced without editing application code
-by setting the GitHub Actions repository variable `INJECTGUARD_API_BASE_URL`.
+The public entry point is <https://ray51773.github.io/injectguard/>. It forwards
+visitors to the complete interface at <https://injectguard-api.onrender.com>,
+where the page and FastAPI scanner share one origin. The Pages workflow writes
+that address to the runtime `config.js`; it can be replaced without editing
+application code by setting the GitHub Actions repository variable
+`INJECTGUARD_API_BASE_URL`.
 
 Allow the Pages origin at the API deployment:
 

@@ -18,6 +18,11 @@ const isFilePreview = window.location.protocol === "file:";
 const isHostedPreview = window.location.hostname.endsWith("github.io");
 const serviceUnavailable = !configuredApiBase && (isFilePreview || isHostedPreview);
 
+if (isHostedPreview && configuredApiBase) {
+  const target = `${configuredApiBase}/${window.location.search}${window.location.hash}`;
+  window.location.replace(target);
+}
+
 const states = {
   empty: document.querySelector("#empty-state"),
   loading: document.querySelector("#loading-state"),
