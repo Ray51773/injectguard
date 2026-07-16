@@ -55,7 +55,9 @@ def main() -> int:
     try:
         from sentence_transformers import SentenceTransformer
     except Exception as exc:
-        raise SystemExit(f"sentence-transformers is required to build centroids: {exc}")
+        raise SystemExit(
+            f"sentence-transformers is required to build centroids: {exc}"
+        ) from exc
 
     model_name = "sentence-transformers/all-MiniLM-L6-v2"
     model = SentenceTransformer(model_name, local_files_only=True)

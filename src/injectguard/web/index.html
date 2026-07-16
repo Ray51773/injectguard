@@ -7,6 +7,7 @@
     <meta name="description" content="Local prompt-injection scanner for machine-shaped content.">
     <title>injectguard scanner</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -43,6 +44,42 @@
           </div>
         </div>
 
+        <div id="drop-zone" class="file-inspector" tabindex="0" role="button" aria-label="Choose or drop a file to inspect">
+          <div class="file-inspector-copy">
+            <span class="file-icon" aria-hidden="true">+</span>
+            <div>
+              <strong>Inspect a file</strong>
+              <span>Drop a supported document here or choose one</span>
+            </div>
+          </div>
+          <label class="file-button button button-secondary" for="file-input">Choose file</label>
+          <input id="file-input" type="file" accept=".txt,.md,.json,.csv,.html,.htm,.docx,.pdf" hidden>
+        </div>
+
+        <div id="selected-file" class="selected-file" hidden>
+          <div class="selected-file-main">
+            <span class="selected-file-mark" aria-hidden="true">DOC</span>
+            <div>
+              <strong id="selected-file-name"></strong>
+              <span id="selected-file-meta"></span>
+            </div>
+          </div>
+          <div class="selected-file-actions">
+            <button id="remove-file-button" class="button button-quiet" type="button">Remove</button>
+            <button id="inspect-file-button" class="button button-primary button-inline" type="button">Inspect file</button>
+          </div>
+        </div>
+
+        <div id="upload-progress" class="upload-progress" hidden>
+          <div class="progress-copy">
+            <span id="progress-label">Preparing upload</span>
+            <span id="progress-value">0%</span>
+          </div>
+          <div class="progress-track"><span id="progress-bar"></span></div>
+        </div>
+
+        <div class="input-divider"><span>or inspect pasted text</span></div>
+
         <div class="field-row">
           <label class="field filename-field">
             <span>Source name</span>
@@ -67,15 +104,14 @@
           </label>
         </div>
 
-        <div id="drop-zone" class="editor-shell">
+        <div class="editor-shell">
           <div class="editor-topline">
             <span>Payload</span>
             <span class="editor-language">plain text</span>
           </div>
           <textarea id="content-input" spellcheck="false" aria-label="Content to scan" placeholder="Untrusted content"></textarea>
           <div class="editor-footer">
-            <label class="file-button button button-secondary" for="file-input">Open file</label>
-            <input id="file-input" type="file" hidden>
+            <span>Plain-text scanner</span>
             <span id="content-stats">0 lines · 0 characters</span>
           </div>
         </div>
@@ -139,16 +175,28 @@
             <p id="assessment-copy"></p>
           </div>
 
+          <div id="extraction-summary" class="extraction-summary" hidden>
+            <div><span>Segments</span><strong id="segment-count">0</strong></div>
+            <div><span>Characters</span><strong id="character-count">0</strong></div>
+            <div><span>Pages</span><strong id="page-count">0</strong></div>
+            <div><span>Hidden</span><strong id="hidden-count">0</strong></div>
+          </div>
+
           <div class="signal-section">
             <div class="signal-heading">
               <div>
                 <p class="eyebrow">Evidence</p>
-                <h3>Detector signals</h3>
+                <h3 id="evidence-title">Detector signals</h3>
               </div>
               <span class="contribution-label">score × weight</span>
             </div>
             <div id="signal-list" class="signal-list"></div>
           </div>
+
+          <details id="extracted-section" class="extracted-section" hidden>
+            <summary>Extracted text <span id="extracted-count"></span></summary>
+            <div id="extracted-list" class="extracted-list"></div>
+          </details>
         </div>
       </section>
     </main>

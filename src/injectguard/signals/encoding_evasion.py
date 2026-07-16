@@ -13,7 +13,6 @@ from injectguard.signals.common import (
 )
 from injectguard.types import ContainerType
 
-
 BASE64_RE = re.compile(r"\b(?:[A-Za-z0-9+/]{24,}={0,2}|[A-Za-z0-9_-]{24,})\b")
 HEX_RE = re.compile(r"\b(?:0x)?[0-9A-Fa-f]{32,}\b")
 ZERO_WIDTH_RE = re.compile(r"[\u200b-\u200f\u202a-\u202e\u2060-\u206f]")
@@ -60,12 +59,15 @@ def score(content: str, container: ContainerType, source: str | None = None) -> 
 
 def _decode_base64(value: str) -> str | None:
     padded = value + "=" * (-len(value) % 4)
-    for decoder in (base64.b64decode, base64.urlsafe_b64decode):
-        try:
-            decoded = decoder(padded.encode("ascii"), validate=False)
-            return decoded.decode("utf-8")
-        except Exception:
-            continue
+    encoded = padded.encode("ascii")
+    try:
+        return base64.b64decode(encoded, validate=False).decode("utf-8")
+    except Exception:
+        pass
+    try:
+        return base64.urlsafe_b64decode(encoded).decode("utf-8")
+    except Exception:
+        pass
     return None
 
 

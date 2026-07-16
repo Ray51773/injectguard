@@ -95,24 +95,94 @@ documents = transformer.transform_documents(documents)
 Run the optional FastAPI service:
 
 ```bash
-pip install -e ".[server]"
-uvicorn injectguard.server:app --reload
+uv sync --extra server
+uv run uvicorn injectguard.server:app --reload
 ```
 
-Open `http://127.0.0.1:8000` for the local web scanner. It supports pasted
-content, file uploads and drag-and-drop, automatic container detection, and a
-per-signal evidence breakdown. Scans stay on the local machine.
+Open `http://127.0.0.1:8000` for the web scanner. Pasted text uses the existing
+`POST /scan` API. Original file bytes are sent as multipart form data to the
+file inspection API:
 
-A static interface preview is published at
-<https://ray51773.github.io/injectguard/>. GitHub Pages cannot run the Python
-detectors, so use the local service for real scans.
-
-The service also exposes the scan API and interactive API documentation:
+```bash
+curl -F "file=@./retrieved/report.pdf" http://127.0.0.1:8000/api/scan-file
+```
 
 ```text
 POST /scan
+POST /api/scan-file   multipart field: file
 GET  /docs
 ```
+
+### File inspection
+
+The file scanner supports `.txt`, `.md`, `.json`, `.csv`, `.html`, `.htm`,
+`.docx`, and `.pdf`. It validates the extension against the detected file
+structure instead of trusting the browser-provided MIME type.
+
+- DOCX inspection includes paragraphs, tables, headers, footers, comments,
+  hyperlinks, document properties, hidden runs, near-white text, very small
+  text, text boxes represented in WordprocessingML, and raw instruction or
+  deleted-text XML nodes.
+- PDF inspection includes page spans and rendering properties, near-white or
+  very small text, text outside page bounds, annotations, metadata, embedded
+  UTF-8 text files, and OCR when the PDF is image-based and local OCR support is
+  available.
+- HTML inspection keeps visible text, comments, hidden or off-screen text,
+  scripts, and data attributes separate. Extracted HTML is returned and shown
+  as plain text; it is never rendered by the interface.
+- JSON values and CSV cells retain paths or row and column locations.
+
+Every extracted segment retains its source filename, container, structural
+location, visibility (`visible`, `hidden`, or `metadata`), character offset,
+and text. The scanner evaluates each segment, each structural section, the full
+combined document, and overlapping chunks. This prevents long documents from
+hiding instructions between a start-only and end-only sample.
+
+Files are processed in memory under bounded size, archive expansion, segment,
+and extracted-character limits. No upload is retained. Encrypted or
+password-protected documents and executable DOCX content are rejected.
+
+The default upload limit is 20 MB. Service limits can be changed with:
+
+```bash
+INJECTGUARD_MAX_UPLOAD_BYTES=20971520
+INJECTGUARD_MAX_ARCHIVE_ENTRIES=2000
+INJECTGUARD_MAX_EXPANDED_BYTES=83886080
+INJECTGUARD_MAX_COMPRESSION_RATIO=150
+INJECTGUARD_MAX_DOCUMENT_PAGES=2000
+INJECTGUARD_MAX_JSON_DEPTH=100
+INJECTGUARD_MAX_SEGMENTS=50000
+INJECTGUARD_MAX_EXTRACTED_CHARACTERS=8000000
+INJECTGUARD_SCAN_TIMEOUT_SECONDS=45
+uvicorn injectguard.server:app --reload
+```
+
+The response includes an opaque scan ID, file metadata, `allow`, `review`, or
+`block` verdict, risk score, extraction statistics, located findings, and
+extracted segments. Expected failures use stable categories including
+`unsupported_type`, `file_too_large`, `extraction_failed`,
+`encrypted_document`, `detector_failed`, and `timeout`.
+
+### Hosted interface
+
+The interface is published at <https://ray51773.github.io/injectguard/>.
+GitHub Pages is static, so real hosted scans require the FastAPI application to
+be deployed separately over HTTPS. Set the GitHub Actions repository variable
+`INJECTGUARD_API_BASE_URL` to that deployment's origin, for example
+`https://injectguard-api.example.test`. The Pages workflow writes the value to
+the runtime `config.js`; no backend URL is compiled into the application code.
+
+Allow the Pages origin at the API deployment:
+
+```bash
+INJECTGUARD_CORS_ORIGINS=https://ray51773.github.io \
+INJECTGUARD_PUBLIC_API_BASE_URL=https://injectguard-api.example.test \
+uv run uvicorn injectguard.server:app --host 0.0.0.0 --port 8000
+```
+
+Until `INJECTGUARD_API_BASE_URL` points to a live service, the hosted page shows
+an explicit service-not-configured message. Local development remains
+same-origin and needs no CORS setting.
 
 ## API
 
@@ -219,5 +289,15 @@ PYTHONPATH=src python scripts/evaluate_corpus.py tests/corpus
 
 CI fails if corpus F1 drops below the threshold recorded in
 `tests/efficacy_threshold.json`.
+
+File extraction tests cover benign and hidden-text DOCX, white-text PDF,
+long-text tail instructions, distant instruction fragments, HTML comments and
+hidden text, located CSV cells, quoted training material, signature mismatch,
+and upload limits:
+
+```bash
+uv sync --all-extras --dev
+uv run pytest
+```
 
 [ncsc-dec-2025]: https://www.itpro.com/security/ncsc-issues-urgent-warning-over-growing-ai-prompt-injection-risks-heres-what-you-need-to-know

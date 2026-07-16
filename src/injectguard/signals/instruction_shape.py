@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import re
-
 from injectguard.signals.common import (
     SignalMatch,
     clamp,
@@ -11,7 +9,6 @@ from injectguard.signals.common import (
     matches,
 )
 from injectguard.types import ContainerType
-
 
 COMPLIANCE_RE = (
     r"\b(if you are (an? )?(ai|assistant|agent|language model)|"
@@ -64,7 +61,7 @@ def _imperative_count(content: str) -> int:
         if not tokens:
             continue
         first = tokens[0]
-        if first.tag_ == "VB" or first.pos_ == "VERB" and first.dep_ in {"ROOT", ""}:
+        if first.tag_ == "VB" or (first.pos_ == "VERB" and first.dep_ in {"ROOT", ""}):
             count += 1
             continue
         if (

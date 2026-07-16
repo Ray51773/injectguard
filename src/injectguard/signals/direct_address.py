@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-import re
-
 from injectguard.signals.common import SignalMatch, clamp, density, first_spans, matches
 from injectguard.types import ContainerType
-
 
 SECOND_PERSON_RE = r"\b(you|your|yours|yourself|yourselves|reader|assistant|agent|model)\b"
 VOCATIVE_RE = r"\b(dear|hello|attention|note to|listen|hey)\s+(assistant|agent|model|reader|ai)\b"

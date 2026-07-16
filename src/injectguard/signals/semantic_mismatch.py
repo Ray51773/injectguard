@@ -6,13 +6,17 @@ import os
 import re
 from functools import lru_cache
 from importlib import resources
-from typing import Dict, List
+from typing import Any, TypedDict, cast
 
 from injectguard.signals.common import SignalMatch, clamp, cosine
 from injectguard.types import ContainerType
 
-
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{2,}")
+
+
+class _CentroidData(TypedDict):
+    dimension: int
+    centroids: dict[str, list[float]]
 
 
 def score(content: str, container: ContainerType, source: str | None = None) -> SignalMatch:
@@ -42,15 +46,19 @@ def score(content: str, container: ContainerType, source: str | None = None) -> 
 
 
 @lru_cache(maxsize=1)
-def _load_centroids() -> Dict[str, object]:
-    with resources.files("injectguard.data").joinpath("centroids.json").open(
-        "r",
-        encoding="utf-8",
-    ) as handle:
-        return json.load(handle)
+def _load_centroids() -> _CentroidData:
+    with (
+        resources.files("injectguard.data")
+        .joinpath("centroids.json")
+        .open(
+            "r",
+            encoding="utf-8",
+        ) as handle
+    ):
+        return cast(_CentroidData, json.load(handle))
 
 
-def _embed(text: str, dimension: int) -> List[float]:
+def _embed(text: str, dimension: int) -> list[float]:
     transformer = _load_transformer()
     if transformer is not None:
         try:
@@ -63,7 +71,7 @@ def _embed(text: str, dimension: int) -> List[float]:
 
 
 @lru_cache(maxsize=1)
-def _load_transformer():
+def _load_transformer() -> Any | None:
     if os.environ.get("INJECTGUARD_DISABLE_TRANSFORMERS") == "1":
         return None
     try:
@@ -81,7 +89,7 @@ def _load_transformer():
         return None
 
 
-def _hash_embedding(text: str, dimension: int) -> List[float]:
+def _hash_embedding(text: str, dimension: int) -> list[float]:
     vector = [0.0] * dimension
     tokens = TOKEN_RE.findall(text.lower())
     for token in tokens:

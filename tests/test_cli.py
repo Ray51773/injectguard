@@ -54,8 +54,7 @@ class CliTests(unittest.TestCase):
             [sys.executable, "-m", "injectguard.cli", *args],
             check=False,
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
 
 

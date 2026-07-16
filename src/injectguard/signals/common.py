@@ -3,9 +3,10 @@ from __future__ import annotations
 import math
 import re
 import unicodedata
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Iterable, List, Optional, Sequence, Tuple
+from typing import Any
 
 from injectguard.types import ContainerType, Span
 
@@ -14,7 +15,7 @@ from injectguard.types import ContainerType, Span
 class SignalMatch:
     name: str
     score: float
-    spans: List[Span]
+    spans: list[Span]
     details: str = ""
 
 
@@ -33,7 +34,7 @@ def clamp(value: float) -> float:
     return max(0.0, min(1.0, value))
 
 
-def matches(pattern: str, content: str, flags: int = re.IGNORECASE) -> List[Span]:
+def matches(pattern: str, content: str, flags: int = re.IGNORECASE) -> list[Span]:
     return [match.span() for match in re.finditer(pattern, content, flags)]
 
 
@@ -77,32 +78,32 @@ def normalize_obfuscation(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", cleaned)
     table = str.maketrans(
         {
-            "а": "a",
-            "е": "e",
-            "о": "o",
-            "р": "p",
-            "с": "c",
-            "у": "y",
-            "х": "x",
-            "Α": "A",
-            "Β": "B",
-            "Ε": "E",
-            "Η": "H",
-            "Ι": "I",
-            "Κ": "K",
-            "Μ": "M",
-            "Ν": "N",
-            "Ο": "O",
-            "Ρ": "P",
-            "Τ": "T",
-            "Χ": "X",
+            "\u0430": "a",
+            "\u0435": "e",
+            "\u043e": "o",
+            "\u0440": "p",
+            "\u0441": "c",
+            "\u0443": "y",
+            "\u0445": "x",
+            "\u0391": "A",
+            "\u0392": "B",
+            "\u0395": "E",
+            "\u0397": "H",
+            "\u0399": "I",
+            "\u039a": "K",
+            "\u039c": "M",
+            "\u039d": "N",
+            "\u039f": "O",
+            "\u03a1": "P",
+            "\u03a4": "T",
+            "\u03a7": "X",
         }
     )
     return normalized.translate(table)
 
 
 def cosine(left: Sequence[float], right: Sequence[float]) -> float:
-    numerator = sum(a * b for a, b in zip(left, right))
+    numerator = sum(a * b for a, b in zip(left, right, strict=True))
     left_norm = math.sqrt(sum(a * a for a in left))
     right_norm = math.sqrt(sum(b * b for b in right))
     if not left_norm or not right_norm:
@@ -111,7 +112,7 @@ def cosine(left: Sequence[float], right: Sequence[float]) -> float:
 
 
 @lru_cache(maxsize=1)
-def get_spacy_nlp():
+def get_spacy_nlp() -> Any | None:
     try:
         import spacy
     except Exception:
@@ -130,7 +131,7 @@ def get_spacy_nlp():
         return None
 
 
-def first_spans(spans: Iterable[Span], limit: int = 5) -> List[Span]:
+def first_spans(spans: Iterable[Span], limit: int = 5) -> list[Span]:
     unique = []
     seen = set()
     for span in spans:

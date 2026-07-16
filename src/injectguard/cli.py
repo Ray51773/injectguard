@@ -4,8 +4,9 @@ import argparse
 import json
 import logging
 import sys
+from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Iterable, List, Sequence
+from typing import Any
 
 from injectguard import detect_container, scan
 from injectguard.types import ScanResult, Signal, Verdict
@@ -75,12 +76,10 @@ def _scan_file(path: Path) -> ScanResult:
     return scan(content, container, source=str(path))
 
 
-def _emit(results: List[ScanResult], fmt: str) -> None:
+def _emit(results: list[ScanResult], fmt: str) -> None:
     if fmt == "json":
         payload = (
-            results[0].to_dict()
-            if len(results) == 1
-            else [result.to_dict() for result in results]
+            results[0].to_dict() if len(results) == 1 else [result.to_dict() for result in results]
         )
         sys.stdout.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     elif fmt == "sarif":
@@ -89,7 +88,7 @@ def _emit(results: List[ScanResult], fmt: str) -> None:
         _emit_table(results)
 
 
-def _emit_table(results: List[ScanResult]) -> None:
+def _emit_table(results: list[ScanResult]) -> None:
     rows = [
         (
             result.source or "<stdin>",
@@ -102,13 +101,9 @@ def _emit_table(results: List[ScanResult]) -> None:
     ]
     headers = ("SOURCE", "CONTAINER", "VERDICT", "RISK", "TOP SIGNALS")
     widths = [
-        max(len(str(row[index])) for row in rows + [headers])
-        for index in range(len(headers))
+        max(len(str(row[index])) for row in [*rows, headers]) for index in range(len(headers))
     ]
-    header_row = "  ".join(
-        header.ljust(widths[index])
-        for index, header in enumerate(headers)
-    )
+    header_row = "  ".join(header.ljust(widths[index]) for index, header in enumerate(headers))
     sys.stdout.write(header_row + "\n")
     sys.stdout.write("  ".join("-" * width for width in widths) + "\n")
     for row in rows:
@@ -125,9 +120,9 @@ def _exit_code(results: Sequence[ScanResult]) -> int:
     return 0
 
 
-def _to_sarif(results: List[ScanResult]) -> dict:
-    rules = {}
-    sarif_results = []
+def _to_sarif(results: list[ScanResult]) -> dict[str, Any]:
+    rules: dict[str, Any] = {}
+    sarif_results: list[dict[str, Any]] = []
     for result in results:
         for signal in result.signals:
             rules[signal.name] = {
@@ -154,9 +149,9 @@ def _to_sarif(results: List[ScanResult]) -> dict:
     }
 
 
-def _sarif_result(result: ScanResult, signal: Signal) -> dict:
+def _sarif_result(result: ScanResult, signal: Signal) -> dict[str, Any]:
     level = "error" if result.verdict is Verdict.INJECTION else "warning"
-    location = {
+    location: dict[str, Any] = {
         "physicalLocation": {
             "artifactLocation": {"uri": result.source or "<stdin>"},
         }
@@ -166,10 +161,7 @@ def _sarif_result(result: ScanResult, signal: Signal) -> dict:
             "charOffset": signal.span[0],
             "charLength": signal.span[1] - signal.span[0],
         }
-    message = (
-        f"{signal.name} score={signal.score:.2f} "
-        f"weight={signal.weight:.2f}: {signal.excerpt}"
-    )
+    message = f"{signal.name} score={signal.score:.2f} weight={signal.weight:.2f}: {signal.excerpt}"
     return {
         "ruleId": signal.name,
         "level": level,

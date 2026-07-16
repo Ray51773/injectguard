@@ -3,7 +3,6 @@ from __future__ import annotations
 from injectguard.signals.common import SignalMatch, clamp, density, first_spans, matches
 from injectguard.types import ContainerType
 
-
 MORAL_RE = (
     r"\b(harm|harmful|ethical|ethics|moral|morality|fairness|justice|rights|"
     r"safety|safe|dangerous|danger|victim|abuse|consent|coercion|"

@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import importlib
-from typing import Iterable, List, Optional
+from collections.abc import Iterable
 
 from injectguard.config import enabled_detectors, load_config, thresholds_for, weights_for
 from injectguard.signals.common import SignalMatch
 from injectguard.types import ContainerType, ScanResult, Signal, Verdict
-
 
 DETECTORS = [
     "direct_address",
@@ -22,7 +21,7 @@ DETECTORS = [
 def scan(
     content: str,
     container: ContainerType,
-    source: Optional[str] = None,
+    source: str | None = None,
 ) -> ScanResult:
     config = load_config()
     weights = weights_for(config, container)
@@ -30,7 +29,7 @@ def scan(
 
     weighted_total = 0.0
     active_weight = 0.0
-    signals: List[Signal] = []
+    signals: list[Signal] = []
 
     for match in matches:
         weight = weights.get(match.name, 0.0)
@@ -38,7 +37,10 @@ def scan(
             continue
         active_weight += weight
         weighted_total += weight * match.score
-        for span in match.spans[:5] or [None]:
+        candidate_spans: list[tuple[int, int] | None] = list(match.spans[:5])
+        if not candidate_spans:
+            candidate_spans.append(None)
+        for span in candidate_spans:
             excerpt = _excerpt(content, span) if span else ""
             signals.append(
                 Signal(
@@ -63,9 +65,7 @@ def scan(
         verdict = Verdict.CLEAN
 
     signals = [
-        signal
-        for signal in signals
-        if signal.score > 0 or signal.name == "semantic_mismatch"
+        signal for signal in signals if signal.score > 0 or signal.name == "semantic_mismatch"
     ]
     signals.sort(key=lambda signal: signal.score * signal.weight, reverse=True)
     return ScanResult(
@@ -80,7 +80,7 @@ def scan(
 def _run_detectors(
     content: str,
     container: ContainerType,
-    source: Optional[str],
+    source: str | None,
     enabled: set[str],
 ) -> Iterable[SignalMatch]:
     for detector in DETECTORS:

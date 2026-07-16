@@ -10,7 +10,6 @@ from injectguard.signals.common import (
 )
 from injectguard.types import ContainerType
 
-
 ROLE_RE = (
     r"(?im)(^|\b)(system|developer|assistant|user)\s*:"
     r"|<\s*/?\s*(system|developer|assistant|user|instructions?|prompt)\b[^>]*>"

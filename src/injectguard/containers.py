@@ -3,14 +3,16 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Any
 
 from injectguard.types import ContainerType
 
 try:
-    import yaml
+    import yaml as yaml_module
 except Exception:  # pragma: no cover - PyYAML is a runtime dependency.
-    yaml = None
+    yaml: Any = None
+else:
+    yaml = yaml_module
 
 
 _CREDENTIAL_NAME_RE = re.compile(
@@ -39,7 +41,7 @@ _MARKDOWN_EXTS = {".md", ".markdown", ".mdx", ".rst"}
 _LOG_EXTS = {".log", ".out", ".err"}
 
 
-def detect_container(filename: Optional[str], content: str) -> ContainerType:
+def detect_container(filename: str | None, content: str) -> ContainerType:
     """Infer a container type from filename and content."""
 
     path = Path(filename or "")
@@ -110,10 +112,5 @@ def _comment_ratio(content: str) -> float:
     lines = [line.strip() for line in content.splitlines() if line.strip()]
     if not lines:
         return 0.0
-    comment_lines = [
-        line
-        for line in lines
-        if line.startswith(("#", "//", "/*", "*", "<!--"))
-    ]
+    comment_lines = [line for line in lines if line.startswith(("#", "//", "/*", "*", "<!--"))]
     return len(comment_lines) / len(lines)
-

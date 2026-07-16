@@ -26,6 +26,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Configure scanning service URL
+        env:
+          API_BASE_URL: ${{ vars.INJECTGUARD_API_BASE_URL }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          value = os.environ.get("API_BASE_URL", "").rstrip("/")
+          Path("src/injectguard/web/config.js").write_text(
+              "window.INJECTGUARD_CONFIG = "
+              + json.dumps({"apiBaseUrl": value})
+              + ";\n",
+              encoding="utf-8",
+          )
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload web interface

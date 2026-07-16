@@ -3,7 +3,6 @@ from __future__ import annotations
 from injectguard.signals.common import SignalMatch, clamp, density, first_spans, matches
 from injectguard.types import ContainerType
 
-
 AUTHORITY_RE = (
     r"\b(law|legal|regulation|regulatory|gdpr|hipaa|ccpa|sox|iso\s?27001|"
     r"audit|auditor|compliance|authorized|authorised|authorization|authorisation|"

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from enum import StrEnum
+from typing import Any
 
 
-class ContainerType(str, Enum):
+class ContainerType(StrEnum):
     ENV_FILE = "ENV_FILE"
     CREDENTIALS = "CREDENTIALS"
     JSON = "JSON"
@@ -19,25 +19,25 @@ class ContainerType(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 
-class Verdict(str, Enum):
+class Verdict(StrEnum):
     CLEAN = "CLEAN"
     SUSPICIOUS = "SUSPICIOUS"
     INJECTION = "INJECTION"
 
 
-Span = Tuple[int, int]
+Span = tuple[int, int]
 
 
 @dataclass(frozen=True)
 class Signal:
     name: str
     weight: float
-    span: Optional[Span]
+    span: Span | None
     excerpt: str
     score: float
     details: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["span"] = list(self.span) if self.span else None
         return data
@@ -47,9 +47,9 @@ class Signal:
 class ScanResult:
     risk: float
     verdict: Verdict
-    signals: List[Signal]
+    signals: list[Signal]
     container: ContainerType
-    source: Optional[str] = None
+    source: str | None = None
 
     def explain(self) -> str:
         if not self.signals:
@@ -76,7 +76,7 @@ class ScanResult:
             )
         return "\n".join(parts)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "risk": self.risk,
             "verdict": self.verdict.value,
@@ -84,4 +84,3 @@ class ScanResult:
             "source": self.source,
             "signals": [signal.to_dict() for signal in self.signals],
         }
-
