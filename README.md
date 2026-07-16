@@ -103,6 +103,10 @@ Open `http://127.0.0.1:8000` for the local web scanner. It supports pasted
 content, file uploads and drag-and-drop, automatic container detection, and a
 per-signal evidence breakdown. Scans stay on the local machine.
 
+A static interface preview is published at
+<https://ray51773.github.io/injectguard/>. GitHub Pages cannot run the Python
+detectors, so use the local service for real scans.
+
 The service also exposes the scan API and interactive API documentation:
 
 ```text

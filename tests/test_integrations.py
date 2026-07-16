@@ -73,6 +73,7 @@ class ServerTests(unittest.TestCase):
 
         self.assertIn("injectguard", index)
         self.assertIn('fetch("/scan"', script)
+        self.assertIn('hostname.endsWith("github.io")', script)
 
     @unittest.skipIf(server.app is None, "FastAPI server extra is not installed")
     def test_web_interface_and_scan_endpoint(self) -> None:

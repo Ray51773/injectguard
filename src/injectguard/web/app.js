@@ -9,6 +9,10 @@ const scanButton = document.querySelector("#scan-button");
 const contentStats = document.querySelector("#content-stats");
 const editorLanguage = document.querySelector(".editor-language");
 const connectionLabel = document.querySelector("#connection-label");
+const apiDocsLink = document.querySelector("#api-docs-link");
+const isFilePreview = window.location.protocol === "file:";
+const isHostedPreview = window.location.hostname.endsWith("github.io");
+const isStaticPreview = isFilePreview || isHostedPreview;
 
 const states = {
   empty: document.querySelector("#empty-state"),
@@ -182,8 +186,8 @@ async function scanContent() {
   }
   contentInput.removeAttribute("aria-invalid");
 
-  if (window.location.protocol === "file:") {
-    document.querySelector("#error-message").textContent = "The interface preview is ready. Run the local service to perform a real scan.";
+  if (isStaticPreview) {
+    document.querySelector("#error-message").textContent = "This hosted interface is a static preview. Run the local service to perform a real scan.";
     showState("error");
     return;
   }
@@ -282,9 +286,11 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-if (window.location.protocol === "file:") {
+if (isStaticPreview) {
   document.body.classList.add("preview-mode");
-  connectionLabel.textContent = "Interface preview";
+  connectionLabel.textContent = isHostedPreview ? "Hosted preview" : "Interface preview";
+  apiDocsLink.textContent = "Repository";
+  apiDocsLink.href = "https://github.com/Ray51773/injectguard";
 }
 
 updateStats();
