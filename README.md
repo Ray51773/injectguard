@@ -184,6 +184,19 @@ Until `INJECTGUARD_API_BASE_URL` points to a live service, the hosted page shows
 an explicit service-not-configured message. Local development remains
 same-origin and needs no CORS setting.
 
+#### Deploy the scanner
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ray51773/injectguard)
+
+The repository includes a `render.yaml` Blueprint and Docker image for a free
+Render web service in Frankfurt. After approving the Blueprint, copy the
+service's `https://...onrender.com` URL into the GitHub repository variable
+`INJECTGUARD_API_BASE_URL`, then run the **Deploy web preview** workflow. The
+same Render URL also serves the complete interface directly.
+
+The free service sleeps while idle, so its first request after a quiet period
+can take about a minute. Use an always-on service plan for a production scanner.
+
 ## API
 
 ```python

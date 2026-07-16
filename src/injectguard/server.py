@@ -74,6 +74,10 @@ def create_app() -> Any:
         )
         return Response(body, media_type="text/javascript")
 
+    @app.get("/healthz", include_in_schema=False)
+    def health_check() -> dict[str, str]:
+        return {"status": "ok"}
+
     @app.post("/scan")
     def scan_endpoint(
         request: dict[str, Any] = Body(...),  # noqa: B008

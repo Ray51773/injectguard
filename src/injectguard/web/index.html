@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="description" content="Local prompt-injection scanner for machine-shaped content.">
+    <meta name="description" content="Prompt-injection scanner for machine-shaped content.">
     <title>injectguard scanner</title>
     <link rel="stylesheet" href="styles.css">
     <script src="config.js"></script>
@@ -23,7 +23,7 @@
         <span class="detector-count">7 detectors</span>
         <div class="privacy-status">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="connection-label">Local-only analysis</span>
+          <span id="connection-label">Scanner ready</span>
         </div>
       </div>
     </header>
@@ -117,7 +117,7 @@
         </div>
 
         <button id="scan-button" class="button button-primary" type="button">
-          <span>Run local scan</span>
+          <span>Run scan</span>
           <span class="button-key">⌘ Enter</span>
         </button>
       </section>
@@ -137,7 +137,7 @@
 
         <div id="loading-state" class="loading-state" hidden>
           <div class="spinner" aria-hidden="true"></div>
-          <p>Running local detectors…</p>
+          <p>Running detectors…</p>
         </div>
 
         <div id="error-state" class="error-state" hidden>

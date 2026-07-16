@@ -87,6 +87,7 @@ class ServerTests(unittest.TestCase):
         styles = client.get("/styles.css")
         script = client.get("/app.js")
         config = client.get("/config.js")
+        health = client.get("/healthz")
         result = client.post(
             "/scan",
             json={
@@ -115,6 +116,8 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(styles.headers["content-type"], "text/css; charset=utf-8")
         self.assertEqual(script.status_code, 200)
         self.assertEqual(config.status_code, 200)
+        self.assertEqual(health.status_code, 200)
+        self.assertEqual(health.json(), {"status": "ok"})
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result.json()["container"], "ENV_FILE")
         self.assertEqual(file_result.status_code, 200)

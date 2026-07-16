@@ -32,7 +32,9 @@ const errorMessages = {
   encrypted_document: "Encrypted and password-protected documents cannot be inspected.",
   detector_failed: "The detector could not complete the scan.",
   timeout: "The file took too long to inspect.",
-  service_unavailable: "The scanning service is not configured for this hosted page.",
+  service_unavailable: configuredApiBase
+    ? "The scanning service could not be reached."
+    : "The scanning service is not configured for this hosted page.",
 };
 
 const samples = [
@@ -516,6 +518,8 @@ if (serviceUnavailable) {
 } else if (configuredApiBase) {
   connectionLabel.textContent = "Scanning service connected";
   apiDocsLink.href = `${configuredApiBase}/docs`;
+} else {
+  connectionLabel.textContent = "Scanner ready";
 }
 
 updateStats();

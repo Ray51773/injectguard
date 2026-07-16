@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: injectguard-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: INJECTGUARD_CORS_ORIGINS
+        value: https://ray51773.github.io
+      - key: INJECTGUARD_DISABLE_TRANSFORMERS
+        value: "1"
+      - key: INJECTGUARD_MAX_UPLOAD_BYTES
+        value: "20971520"
+      - key: INJECTGUARD_SCAN_TIMEOUT_SECONDS
+        value: "45"
