@@ -166,11 +166,10 @@ extracted segments. Expected failures use stable categories including
 ### Hosted interface
 
 The interface is published at <https://ray51773.github.io/injectguard/>.
-GitHub Pages is static, so real hosted scans require the FastAPI application to
-be deployed separately over HTTPS. Set the GitHub Actions repository variable
-`INJECTGUARD_API_BASE_URL` to that deployment's origin, for example
-`https://injectguard-api.example.test`. The Pages workflow writes the value to
-the runtime `config.js`; no backend URL is compiled into the application code.
+GitHub Pages is static, so real hosted scans use the FastAPI application at
+<https://injectguard-api.onrender.com>. The Pages workflow writes that address
+to the runtime `config.js`; it can be replaced without editing application code
+by setting the GitHub Actions repository variable `INJECTGUARD_API_BASE_URL`.
 
 Allow the Pages origin at the API deployment:
 
@@ -180,9 +179,7 @@ INJECTGUARD_PUBLIC_API_BASE_URL=https://injectguard-api.example.test \
 uv run uvicorn injectguard.server:app --host 0.0.0.0 --port 8000
 ```
 
-Until `INJECTGUARD_API_BASE_URL` points to a live service, the hosted page shows
-an explicit service-not-configured message. Local development remains
-same-origin and needs no CORS setting.
+Local development remains same-origin and needs no CORS setting.
 
 #### Deploy the scanner
 
